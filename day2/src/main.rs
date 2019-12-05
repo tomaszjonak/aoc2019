@@ -6,7 +6,7 @@ enum Opcode {
     Add,
     Mul,
     Halt,
-    Invalid(u64)
+    Invalid(u64),
 }
 
 impl std::convert::From<u64> for Opcode {
@@ -32,13 +32,21 @@ fn vm(mem: &[u64]) -> Vec<u64> {
         op = res[op_ptr].into();
         match op {
             Opcode::Add => {
-                let (dest, lhs, rhs) = (res[op_ptr+3] as usize, res[op_ptr+1] as usize, res[op_ptr+2] as usize);
+                let (dest, lhs, rhs) = (
+                    res[op_ptr + 3] as usize,
+                    res[op_ptr + 1] as usize,
+                    res[op_ptr + 2] as usize,
+                );
                 res[dest] = res[lhs] + res[rhs];
-            },
+            }
             Opcode::Mul => {
-                let (dest, lhs, rhs) = (res[op_ptr+3] as usize, res[op_ptr+1] as usize, res[op_ptr+2] as usize);
+                let (dest, lhs, rhs) = (
+                    res[op_ptr + 3] as usize,
+                    res[op_ptr + 1] as usize,
+                    res[op_ptr + 2] as usize,
+                );
                 res[dest] = res[lhs] * res[rhs];
-            },
+            }
             Opcode::Halt => break,
             Opcode::Invalid(x) => panic!("Invalid opcode encountered: {}", x),
         }
@@ -52,24 +60,24 @@ fn vm(mem: &[u64]) -> Vec<u64> {
 mod tests {
     #[test]
     fn test_vm_addition() {
-        let mem = vec![1,0,0,0,99];
-        let expected = vec![2,0,0,0,99];
+        let mem = vec![1, 0, 0, 0, 99];
+        let expected = vec![2, 0, 0, 0, 99];
         let result = super::vm(&mem);
         assert_eq!(result, expected);
     }
 
     #[test]
     fn test_vm_multiplication() {
-        let mem = vec![2,3,0,3,99];
-        let expected = vec![2,3,0,6,99];
+        let mem = vec![2, 3, 0, 3, 99];
+        let expected = vec![2, 3, 0, 6, 99];
         let result = super::vm(&mem);
         assert_eq!(result, expected);
     }
 
     #[test]
     fn test_vm_compound() {
-        let mem = vec![1,1,1,4,99,5,6,0,99];
-        let expected = vec![30,1,1,4,2,5,6,0,99];
+        let mem = vec![1, 1, 1, 4, 99, 5, 6, 0, 99];
+        let expected = vec![30, 1, 1, 4, 2, 5, 6, 0, 99];
         let result = super::vm(&mem);
         assert_eq!(result, expected);
     }
@@ -79,7 +87,8 @@ fn main() {
     let stdin = io::stdin();
     let stdlocked = stdin.lock();
 
-    let mem: Vec<u64> = stdlocked.split(',' as u8)
+    let mem: Vec<u64> = stdlocked
+        .split(',' as u8)
         .filter_map(|x| x.ok())
         .map(|x| String::from_utf8(x).unwrap().parse::<u64>().unwrap())
         .collect();
