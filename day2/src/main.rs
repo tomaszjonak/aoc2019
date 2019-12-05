@@ -75,6 +75,14 @@ mod tests {
     }
 
     #[test]
+    fn test_vm_trailing() {
+        let mem = vec![2, 4, 4, 5, 99, 0];
+        let expected = vec![2, 4, 4, 5, 99, 9801];
+        let result = super::vm(&mem);
+        assert_eq!(result, expected);
+    }
+
+    #[test]
     fn test_vm_compound() {
         let mem = vec![1, 1, 1, 4, 99, 5, 6, 0, 99];
         let expected = vec![30, 1, 1, 4, 2, 5, 6, 0, 99];
@@ -92,6 +100,8 @@ fn main() {
         .filter_map(|x| x.ok())
         .map(|x| String::from_utf8(x).unwrap().parse::<u64>().unwrap())
         .collect();
+
+    println!("{:?}", mem);
 
     let result = vm(&mem);
     println!("{:?}", result)
