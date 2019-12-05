@@ -1,6 +1,3 @@
-use std::io;
-use std::io::prelude::*;
-
 #[derive(PartialEq)]
 enum Opcode {
     Add,
@@ -20,7 +17,7 @@ impl std::convert::From<u64> for Opcode {
     }
 }
 
-fn vm(mem: &[u64]) -> Vec<u64> {
+pub fn vm(mem: &[u64]) -> Vec<u64> {
     let mut res = mem.to_vec();
 
     let mut op_ptr = 0;
@@ -89,20 +86,4 @@ mod tests {
         let result = super::vm(&mem);
         assert_eq!(result, expected);
     }
-}
-
-fn main() {
-    let stdin = io::stdin();
-    let stdlocked = stdin.lock();
-
-    let mem: Vec<u64> = stdlocked
-        .split(',' as u8)
-        .filter_map(|x| x.ok())
-        .map(|x| String::from_utf8(x).unwrap().parse::<u64>().unwrap())
-        .collect();
-
-    println!("{:?}", mem);
-
-    let result = vm(&mem);
-    println!("{:?}", result)
 }
