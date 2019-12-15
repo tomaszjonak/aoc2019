@@ -1,6 +1,6 @@
 use std::cmp;
 
-#[derive(PartialEq, Debug, Clone, Copy)]
+#[derive(Hash, Eq, PartialEq, Debug, Clone, Copy)]
 pub struct Point {
     x: i32,
     y: i32,
@@ -13,6 +13,13 @@ impl Point {
 
     pub fn manhattan_dist(&self, lhs: &Point) -> i32 {
         (self.x - lhs.x).abs() + (self.y - lhs.y).abs()
+    }
+
+    pub fn offset(&self, x: i32, y: i32) -> Self {
+        Self {
+            x: self.x + x,
+            y: self.y + y,
+        }
     }
 }
 
@@ -43,6 +50,31 @@ impl Line {
         }
 
         Some(Point::new(v.0.x, h.0.y))
+    }
+
+    pub fn points(&self) -> Vec<(Point, i32)> {
+        let mut result = Vec::new();
+        match self {
+            Line::Vertical(p, d) => {
+                let mut dir = 1;
+                if *d < 0 {
+                    dir = -1
+                }
+                for i in 1..=(*d).abs() {
+                    result.push((p.offset(0, dir*i), i.abs()));
+                }
+            }
+            Line::Horizontal(p, d) => {
+                let mut dir = 1;
+                if *d < 0 {
+                    dir = -1
+                }
+                for i in 1..=(*d).abs() {
+                    result.push((p.offset(dir*i, 0), i.abs()));
+                }
+            }
+        };
+        result
     }
 }
 
